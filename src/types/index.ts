@@ -1,0 +1,90 @@
+export type {
+  RpcConfig,
+  CallOptions,
+  RpcRequest,
+  RpcResponse,
+  RpcError,
+  BatchCall,
+  BatchResult,
+} from './rpc.js';
+
+export type { Block, BlockHeader } from './block.js';
+
+export type {
+  BlockchainInfo,
+  Bip9SoftFork,
+  SoftFork,
+  TxOutSetInfo,
+  ChainTip,
+  ChainTipStatus,
+  MempoolAncestorsResult,
+  MempoolDescendantsResult,
+} from './blockchain.js';
+
+export type {
+  Transaction,
+  Vin,
+  CoinbaseVin,
+  StandardVin,
+  Vout,
+  RawTxInput,
+  RawTxOutput,
+  PrevTx,
+  SignRawTransactionResult,
+  DecodeRawTransactionResult,
+  DecodeScriptResult,
+  FundRawTransactionResult,
+} from './transactions.js';
+
+export type { ScriptSig, ScriptPubKey } from './shared.js';
+
+export type { NetworkInfo, PeerInfo } from './network.js';
+
+export type {
+  MempoolInfo,
+  MempoolEntry,
+  MempoolEntryFees,
+  RawMempool,
+} from './mempool.js';
+
+export type {
+  AddressBalance,
+  AddressTxIds,
+  AddressDelta,
+  AddressMempoolDelta,
+  AddressUtxo,
+  SpentInfo,
+  TotalSupply,
+} from './address.js';
+
+export type {
+  WalletInfo,
+  ValidateAddressResult,
+  AddressInfo,
+  WalletTxCategory,
+  WalletTransactionDetail,
+  WalletTransactionListEntry,
+  WalletTransaction,
+  ListSinceBlockResult,
+  AddressGroupingEntry,
+  AddressGrouping,
+  AddressBalances,
+  LockedUnspent,
+  ReceivedByAddressEntry,
+  BumpFeeOptions,
+  BumpFeeResult,
+  UnspentOutputRef,
+  ImportMultiRequest,
+  ImportMultiOptions,
+  ImportMultiResult,
+} from './wallet.js';
+
+export type { TxOut, UnspentOutput } from './utxo.js';
+
+export type {
+  FeeRate,
+  SmartFeeEstimate,
+  SmartPriorityEstimate,
+} from './fees.js';
+
+export type { MultisigResult } from './util.js';

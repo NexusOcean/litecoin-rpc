@@ -1,0 +1,90 @@
+{
+  "name": "@nexusocean/litecoin-rpc",
+  "description": "Modern TypeScript client for Litecoin's JSON-RPC interface",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "NexusOcean",
+    "email": "support@nexusocean.dev"
+  },
+  "keywords": [
+    "litecoin",
+    "rpc",
+    "json-rpc",
+    "blockchain",
+    "cryptocurrency"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NexusOcean/litecoin-rpc.git"
+  },
+  "license": "ISC",
+  "type": "module",
+  "packageManager": "pnpm@11.28.6",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest --silent",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write **/*.ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "axios": "^1.20.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@swc/core": "^1.16.18",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.9.9",
+    "@typescript-eslint/eslint-plugin": "^8.71.2",
+    "@typescript-eslint/parser": "^8.71.2",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.13.0",
+    "husky": "^9.1.7",
+    "jest": "^30.5.2",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/NexusOcean/litecoin-rpc/issues"
+  },
+  "homepage": "https://github.com/NexusOcean/litecoin-rpc"
+}
