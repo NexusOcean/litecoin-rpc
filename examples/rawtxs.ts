@@ -56,7 +56,7 @@ async function main() {
   console.log(`  type: ${script.type}`);
   console.log(`  asm:  ${script.asm}`);
 
-  const signed = await client.signRawTransaction(rawHex);
+  const signed = await client.signRawTransactionWithWallet(rawHex);
   console.log(`\nSigned: complete=${signed.complete}`);
 
   if (!signed.complete) {

@@ -71,10 +71,14 @@ export type {
   ImportMultiRequest,
   ImportMultiOptions,
   ImportMultiResult,
+  CreateWalletResult,
+  Balances,
+  BalanceGroup,
   // Fees
   FeeRate,
   SmartFeeEstimate,
   SmartPriorityEstimate,
   // Util
   MultisigResult,
+  DescriptorInfo,
 } from './types/index.js';

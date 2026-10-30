@@ -23,6 +23,10 @@ function toAxiosConfig({ timeout }: CallOptions) {
   return timeout !== undefined ? { timeout } : undefined;
 }
 
+function rpcPath({ wallet }: CallOptions) {
+  return wallet !== undefined ? `/wallet/${encodeURIComponent(wallet)}` : '/';
+}
+
 export async function callRpc<T = unknown>(
   http: AxiosInstance,
   method: string,
@@ -38,7 +42,7 @@ export async function callRpc<T = unknown>(
 
   try {
     const { data } = await http.post<RpcResponse<T>>(
-      '/',
+      rpcPath(options),
       request,
       toAxiosConfig(options),
     );
@@ -91,7 +95,7 @@ export async function callRpcBatch(
 
   try {
     const { data } = await http.post<RpcResponse[]>(
-      '/',
+      rpcPath(options),
       requests,
       toAxiosConfig(options),
     );

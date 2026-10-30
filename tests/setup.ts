@@ -16,6 +16,7 @@ const {
   TEST_WALLET_PASSPHRASE,
   TEST_SPENT_TXID,
   TEST_SPENT_INDEX,
+  TEST_MULTIWALLET,
 } = parsed as Record<string, string>;
 
 if (!LTC_HOST || !LTC_USER || !LTC_PASS || !LTC_PORT || !LTC_PROTOCOL) {
@@ -60,3 +61,8 @@ export const SPENT_TXID = TEST_SPENT_TXID ?? '';
 export const SPENT_INDEX = TEST_SPENT_INDEX
   ? parseInt(TEST_SPENT_INDEX, 10)
   : 0;
+
+// Loads a second wallet on the node, which makes unscoped wallet calls in
+// other spec files fail with -19 while it runs. Run this spec on its own.
+export const maybeDescribeMultiWallet =
+  TEST_MULTIWALLET === '1' ? describe : describe.skip;

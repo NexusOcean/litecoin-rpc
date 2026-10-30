@@ -39,6 +39,8 @@ export interface LitecoinRpcClient
     options?: CallOptions,
   ): Promise<T>;
   batch(calls: BatchCall[], options?: CallOptions): Promise<BatchResult[]>;
+  /** Wallet methods scoped to a named wallet, required when several are loaded. */
+  wallet(name: string): WalletMethods;
 }
 
 export function createLitecoinRpcClient(config: RpcConfig): LitecoinRpcClient {
@@ -54,6 +56,9 @@ export function createLitecoinRpcClient(config: RpcConfig): LitecoinRpcClient {
     },
     batch(calls: BatchCall[], options?: CallOptions): Promise<BatchResult[]> {
       return callRpcBatch(http, calls, options);
+    },
+    wallet(name: string): WalletMethods {
+      return createWalletMethods(http, name);
     },
 
     ...createBlockchainMethods(http),

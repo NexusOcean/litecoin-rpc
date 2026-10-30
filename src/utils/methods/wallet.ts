@@ -1,6 +1,7 @@
 import type { AxiosInstance } from 'axios';
 import { callRpc } from '../rpc.js';
 import type {
+  CallOptions,
   WalletInfo,
   ValidateAddressResult,
   AddressInfo,
@@ -18,6 +19,10 @@ import type {
   ImportMultiRequest,
   ImportMultiOptions,
   ImportMultiResult,
+  CreateWalletResult,
+  Balances,
+  PrevTx,
+  SignRawTransactionResult,
 } from '../../types/index.js';
 
 export interface WalletMethods {
@@ -106,40 +111,53 @@ export interface WalletMethods {
     options?: ImportMultiOptions,
   ): Promise<ImportMultiResult[]>;
   abandonTransaction(txid: string): Promise<void>;
+  createWallet(
+    name: string,
+    opts?: { descriptors?: boolean; passphrase?: string },
+  ): Promise<CreateWalletResult>;
+  getBalances(): Promise<Balances>;
+  signRawTransactionWithWallet(
+    hex: string,
+    prevtxs?: PrevTx[],
+    sighashtype?: string,
+  ): Promise<SignRawTransactionResult>;
 }
 
-export function createWalletMethods(http: AxiosInstance): WalletMethods {
+export function createWalletMethods(
+  http: AxiosInstance,
+  wallet?: string,
+): WalletMethods {
+  const options: CallOptions = wallet !== undefined ? { wallet } : {};
+  const rpc = <T>(method: string, params: unknown[] = []) =>
+    callRpc<T>(http, method, params, options);
+
   return {
     getWalletInfo(): Promise<WalletInfo> {
-      return callRpc<WalletInfo>(http, 'getwalletinfo', []);
+      return rpc<WalletInfo>('getwalletinfo', []);
     },
 
     getBalance(minconf: number = 1): Promise<number> {
-      return callRpc<number>(http, 'getbalance', ['*', minconf]);
+      return rpc<number>('getbalance', ['*', minconf]);
     },
 
     getUnconfirmedBalance(): Promise<number> {
-      return callRpc<number>(http, 'getunconfirmedbalance', []);
+      return rpc<number>('getunconfirmedbalance', []);
     },
 
     getNewAddress(label?: string): Promise<string> {
-      return callRpc<string>(
-        http,
-        'getnewaddress',
-        label !== undefined ? [label] : [],
-      );
+      return rpc<string>('getnewaddress', label !== undefined ? [label] : []);
     },
 
     validateAddress(address: string): Promise<ValidateAddressResult> {
-      return callRpc<ValidateAddressResult>(http, 'validateaddress', [address]);
+      return rpc<ValidateAddressResult>('validateaddress', [address]);
     },
 
     getAddressInfo(address: string): Promise<AddressInfo> {
-      return callRpc<AddressInfo>(http, 'getaddressinfo', [address]);
+      return rpc<AddressInfo>('getaddressinfo', [address]);
     },
 
     getTransaction(txid: string): Promise<WalletTransaction> {
-      return callRpc<WalletTransaction>(http, 'gettransaction', [txid]);
+      return rpc<WalletTransaction>('gettransaction', [txid]);
     },
 
     listTransactions(
@@ -147,7 +165,7 @@ export function createWalletMethods(http: AxiosInstance): WalletMethods {
       count: number = 10,
       skip: number = 0,
     ): Promise<WalletTransactionListEntry[]> {
-      return callRpc<WalletTransactionListEntry[]>(http, 'listtransactions', [
+      return rpc<WalletTransactionListEntry[]>('listtransactions', [
         label,
         count,
         skip,
@@ -163,7 +181,7 @@ export function createWalletMethods(http: AxiosInstance): WalletMethods {
       if (blockhash !== undefined) {
         params.push(blockhash, targetConfirmations, includeWatchOnly);
       }
-      return callRpc<ListSinceBlockResult>(http, 'listsinceblock', params);
+      return rpc<ListSinceBlockResult>('listsinceblock', params);
     },
 
     listUnspent: (
@@ -172,7 +190,7 @@ export function createWalletMethods(http: AxiosInstance): WalletMethods {
       addresses,
       includeUnsafe = true,
     ) =>
-      callRpc<UnspentOutput[]>(http, 'listunspent', [
+      rpc<UnspentOutput[]>('listunspent', [
         minconf,
         maxconf,
         addresses ?? [],
@@ -194,77 +212,71 @@ export function createWalletMethods(http: AxiosInstance): WalletMethods {
       ) {
         params.push(comment ?? '', commentTo ?? '', subtractFeeFromAmount);
       }
-      return callRpc<string>(http, 'sendtoaddress', params);
+      return rpc<string>('sendtoaddress', params);
     },
 
     getReceivedByAddress(
       address: string,
       minconf: number = 1,
     ): Promise<number> {
-      return callRpc<number>(http, 'getreceivedbyaddress', [address, minconf]);
+      return rpc<number>('getreceivedbyaddress', [address, minconf]);
     },
 
     importAddress: (address, label = '', rescan = true, p2sh = false) =>
-      callRpc<void>(http, 'importaddress', [address, label, rescan, p2sh]),
+      rpc<void>('importaddress', [address, label, rescan, p2sh]),
 
-    getRawChangeAddress: () => callRpc<string>(http, 'getrawchangeaddress'),
+    getRawChangeAddress: () => rpc<string>('getrawchangeaddress'),
 
     listAddressBalances: (minAmount = 0) =>
-      callRpc<AddressBalances>(http, 'listaddressbalances', [minAmount]),
+      rpc<AddressBalances>('listaddressbalances', [minAmount]),
 
-    listAddressGroupings: () =>
-      callRpc<AddressGrouping>(http, 'listaddressgroupings'),
+    listAddressGroupings: () => rpc<AddressGrouping>('listaddressgroupings'),
 
-    listLockUnspent: () => callRpc<LockedUnspent[]>(http, 'listlockunspent'),
+    listLockUnspent: () => rpc<LockedUnspent[]>('listlockunspent'),
 
     listReceivedByAddress: (
       minconf = 1,
       includeEmpty = false,
       includeWatchOnly = false,
     ) =>
-      callRpc<ReceivedByAddressEntry[]>(http, 'listreceivedbyaddress', [
+      rpc<ReceivedByAddressEntry[]>('listreceivedbyaddress', [
         minconf,
         includeEmpty,
         includeWatchOnly,
       ]),
 
-    setMinInput: (amount: number) =>
-      callRpc<boolean>(http, 'setmininput', [amount]),
+    setMinInput: (amount: number) => rpc<boolean>('setmininput', [amount]),
 
-    setTxFee: (amount: number) => callRpc<boolean>(http, 'settxfee', [amount]),
+    setTxFee: (amount: number) => rpc<boolean>('settxfee', [amount]),
 
     walletPassphrase: (passphrase: string, timeout: number) =>
-      callRpc<null>(http, 'walletpassphrase', [passphrase, timeout]),
+      rpc<null>('walletpassphrase', [passphrase, timeout]),
 
-    walletLock: () => callRpc<null>(http, 'walletlock', []),
+    walletLock: () => rpc<null>('walletlock', []),
 
     encryptWallet: (passphrase: string) =>
-      callRpc<string>(http, 'encryptwallet', [passphrase]),
+      rpc<string>('encryptwallet', [passphrase]),
 
     walletPassphraseChange: (oldPassphrase: string, newPassphrase: string) =>
-      callRpc<null>(http, 'walletpassphrasechange', [
-        oldPassphrase,
-        newPassphrase,
-      ]),
+      rpc<null>('walletpassphrasechange', [oldPassphrase, newPassphrase]),
 
     dumpPrivKey: (address: string, code?: string) =>
-      callRpc<string>(
-        http,
+      rpc<string>(
         'dumpprivkey',
         code !== undefined ? [address, code] : [address],
       ),
 
     importPrivKey: (privKey: string, label = '', rescan = true) =>
-      callRpc<void>(http, 'importprivkey', [privKey, label, rescan]),
+      rpc<void>('importprivkey', [privKey, label, rescan]),
 
     importPubKey: (pubKey: string, label = '', rescan = true) =>
-      callRpc<void>(http, 'importpubkey', [pubKey, label, rescan]),
+      rpc<void>('importpubkey', [pubKey, label, rescan]),
 
     signMessage: (address: string, message: string) =>
-      callRpc<string>(http, 'signmessage', [address, message]),
+      rpc<string>('signmessage', [address, message]),
 
     lockUnspent: (unlock: boolean, transactions: UnspentOutputRef[] = []) =>
-      callRpc<boolean>(http, 'lockunspent', [unlock, transactions]),
+      rpc<boolean>('lockunspent', [unlock, transactions]),
 
     // fromaccount is a legacy positional param — hardcoded to '', not exposed.
     sendMany: (
@@ -273,7 +285,7 @@ export function createWalletMethods(http: AxiosInstance): WalletMethods {
       comment = '',
       subtractFeeFrom: string[] = [],
     ) =>
-      callRpc<string>(http, 'sendmany', [
+      rpc<string>('sendmany', [
         '',
         recipients,
         minconf,
@@ -282,14 +294,40 @@ export function createWalletMethods(http: AxiosInstance): WalletMethods {
       ]),
 
     bumpFee: (txid: string, options: BumpFeeOptions = {}) =>
-      callRpc<BumpFeeResult>(http, 'bumpfee', [txid, options]),
+      rpc<BumpFeeResult>('bumpfee', [txid, options]),
 
     importMulti: (
       requests: ImportMultiRequest[],
       options: ImportMultiOptions = {},
-    ) => callRpc<ImportMultiResult[]>(http, 'importmulti', [requests, options]),
+    ) => rpc<ImportMultiResult[]>('importmulti', [requests, options]),
 
     abandonTransaction: (txid: string) =>
-      callRpc<void>(http, 'abandontransaction', [txid]),
+      rpc<void>('abandontransaction', [txid]),
+
+    createWallet: (
+      name: string,
+      opts: { descriptors?: boolean; passphrase?: string } = {},
+    ) =>
+      rpc<CreateWalletResult>('createwallet', [
+        name,
+        false, // disable_private_keys
+        false, // blank
+        opts.passphrase ?? '',
+        false, // avoid_reuse
+        opts.descriptors ?? false,
+      ]),
+
+    getBalances: () => rpc<Balances>('getbalances'),
+
+    signRawTransactionWithWallet: (
+      hex: string,
+      prevtxs: PrevTx[] = [],
+      sighashtype = 'ALL',
+    ) =>
+      rpc<SignRawTransactionResult>('signrawtransactionwithwallet', [
+        hex,
+        prevtxs,
+        sighashtype,
+      ]),
   };
 }

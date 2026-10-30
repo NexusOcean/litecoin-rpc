@@ -51,7 +51,7 @@ describe('getBlock', () => {
 describe('getBlockchainInfo', () => {
   it('returns chain info with expected fields', async () => {
     const info = await client.getBlockchainInfo();
-    expect(info.chain).toBe('main');
+    expect(['main', 'test', 'regtest']).toContain(info.chain);
     expect(info.blocks).toBeGreaterThanOrEqual(blockCount);
     expect(info.bestblockhash).toMatch(/^[0-9a-f]{64}$/);
     expect(typeof info.difficulty).toBe('number');

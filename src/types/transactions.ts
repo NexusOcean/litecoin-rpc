@@ -51,6 +51,9 @@ export interface PrevTx {
   vout: number;
   scriptPubKey: string;
   redeemScript?: string;
+  witnessScript?: string;
+  /** Required when signing segwit inputs. */
+  amount?: number;
 }
 
 export interface SignRawTransactionResult {

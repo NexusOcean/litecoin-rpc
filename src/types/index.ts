@@ -87,4 +87,10 @@ export type {
   SmartPriorityEstimate,
 } from './fees.js';
 
-export type { MultisigResult } from './util.js';
+export type {
+  MultisigResult,
+  DescriptorInfo,
+  CreateWalletResult,
+  BalanceGroup,
+  Balances,
+} from './util.js';

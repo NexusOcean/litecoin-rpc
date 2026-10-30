@@ -6,7 +6,7 @@
     "access": "public"
   },
   "author": {
-    "name": "NexusOcean",
+    "name": "nexusocean",
     "email": "support@nexusocean.dev"
   },
   "keywords": [
@@ -18,9 +18,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NexusOcean/litecoin-rpc.git"
+    "url": "git+https://github.com/nexusocean/litecoin-rpc.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@11.28.6",
   "main": "./dist/index.cjs",

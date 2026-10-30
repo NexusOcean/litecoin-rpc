@@ -1,4 +1,5 @@
 export interface WalletInfo {
+  walletname?: string;
   walletversion: number;
   balance: number;
   unconfirmed_balance: number;
@@ -136,11 +137,14 @@ export interface UnspentOutputRef {
 }
 
 export interface ImportMultiRequest {
-  scriptPubKey: string | { address: string };
+  scriptPubKey?: string | { address: string };
+  desc?: string;
+  range?: number | [number, number];
   timestamp: number | 'now';
   redeemscript?: string;
   pubkeys?: string[];
   keys?: string[];
+  keypool?: boolean;
   internal?: boolean;
   watchonly?: boolean;
   label?: string;
@@ -152,5 +156,6 @@ export interface ImportMultiOptions {
 
 export interface ImportMultiResult {
   success: boolean;
+  warnings?: string[];
   error?: { code: number; message: string };
 }

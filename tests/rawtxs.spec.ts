@@ -68,10 +68,10 @@ describe('fundRawTransaction', () => {
   });
 });
 
-describe('signRawTransaction', () => {
+describe('signRawTransactionWithWallet', () => {
   it('returns signed hex and complete flag', async () => {
     if (!utxo) return;
-    const result = await client.signRawTransaction(rawHex);
+    const result = await client.signRawTransactionWithWallet(rawHex);
     expect(typeof result.hex).toBe('string');
     expect(result.hex.length).toBeGreaterThan(0);
     expect(typeof result.complete).toBe('boolean');

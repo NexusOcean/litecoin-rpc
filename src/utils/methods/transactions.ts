@@ -23,10 +23,10 @@ export interface RawTransactionMethods {
     options?: Record<string, unknown>,
   ): Promise<FundRawTransactionResult>;
   sendRawTransaction(hex: string, allowHighFees?: boolean): Promise<string>;
-  signRawTransaction(
+  signRawTransactionWithKey(
     hex: string,
+    privkeys: string[],
     prevtxs?: PrevTx[],
-    privatekeys?: string[],
     sighashtype?: string,
   ): Promise<SignRawTransactionResult>;
 }
@@ -57,16 +57,16 @@ export function createRawTransactionMethods(
     sendRawTransaction: (hex: string, allowHighFees = false) =>
       callRpc<string>(http, 'sendrawtransaction', [hex, allowHighFees]),
 
-    signRawTransaction: (
+    signRawTransactionWithKey: (
       hex,
+      privkeys,
       prevtxs = [],
-      privatekeys = [],
       sighashtype = 'ALL',
     ) =>
-      callRpc<SignRawTransactionResult>(http, 'signrawtransaction', [
+      callRpc<SignRawTransactionResult>(http, 'signrawtransactionwithkey', [
         hex,
+        privkeys,
         prevtxs,
-        privatekeys,
         sighashtype,
       ]),
   };

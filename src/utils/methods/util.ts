@@ -1,6 +1,6 @@
 import type { AxiosInstance } from 'axios';
 import { callRpc } from '../rpc.js';
-import type { MultisigResult } from '../../types/index.js';
+import type { DescriptorInfo, MultisigResult } from '../../types/index.js';
 
 export interface UtilMethods {
   createMultisig(nrequired: number, keys: string[]): Promise<MultisigResult>;
@@ -10,6 +10,11 @@ export interface UtilMethods {
     signature: string,
     message: string,
   ): Promise<boolean>;
+  getDescriptorInfo(descriptor: string): Promise<DescriptorInfo>;
+  deriveAddresses(
+    descriptor: string,
+    range?: number | [number, number],
+  ): Promise<string[]>;
 }
 
 export function createUtilMethods(http: AxiosInstance): UtilMethods {
@@ -35,6 +40,21 @@ export function createUtilMethods(http: AxiosInstance): UtilMethods {
         signature,
         message,
       ]);
+    },
+
+    getDescriptorInfo(descriptor: string): Promise<DescriptorInfo> {
+      return callRpc<DescriptorInfo>(http, 'getdescriptorinfo', [descriptor]);
+    },
+
+    deriveAddresses(
+      descriptor: string,
+      range?: number | [number, number],
+    ): Promise<string[]> {
+      return callRpc<string[]>(
+        http,
+        'deriveaddresses',
+        range === undefined ? [descriptor] : [descriptor, range],
+      );
     },
   };
 }

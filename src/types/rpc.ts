@@ -12,6 +12,8 @@ export interface RpcConfig {
 export interface CallOptions {
   /** Per-call timeout in ms, overriding the client's `timeout`. */
   timeout?: number;
+  /** Target a named wallet via the `/wallet/<name>` endpoint. */
+  wallet?: string;
 }
 
 export interface RpcRequest {
