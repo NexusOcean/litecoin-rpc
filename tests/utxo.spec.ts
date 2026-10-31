@@ -64,13 +64,26 @@ describe('listUnspent', () => {
   it('returns an array of unspent outputs', async () => {
     const utxos = await client.listUnspent();
     expect(Array.isArray(utxos)).toBe(true);
-    if (utxos.length === 0) return;
-    const utxo = utxos[0]!;
+    // MWEB outputs have a different shape; check a regular one.
+    const utxo = utxos.find((u) => typeof u.vout === 'number');
+    if (!utxo) return;
     expect(typeof utxo.txid).toBe('string');
     expect(typeof utxo.vout).toBe('number');
     expect(typeof utxo.amount).toBe('number');
     expect(typeof utxo.confirmations).toBe('number');
     expect(typeof utxo.spendable).toBe('boolean');
+  });
+
+  it('returns MWEB outputs without vout or scriptPubKey', async () => {
+    const utxos = await client.listUnspent();
+    const mweb = utxos.find((u) => u.vout === undefined);
+    if (!mweb) return;
+    expect(typeof mweb.txid).toBe('string');
+    expect(typeof mweb.amount).toBe('number');
+    expect(typeof mweb.confirmations).toBe('number');
+    expect(typeof mweb.spendable).toBe('boolean');
+    expect(typeof mweb.address).toBe('string');
+    expect(mweb).not.toHaveProperty('scriptPubKey');
   });
 
   it('respects minconf filter', async () => {

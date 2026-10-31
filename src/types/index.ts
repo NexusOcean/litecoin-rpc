@@ -79,7 +79,12 @@ export type {
   ImportMultiResult,
 } from './wallet.js';
 
-export type { TxOut, UnspentOutput } from './utxo.js';
+export type {
+  TxOut,
+  UnspentOutput,
+  CanonicalUnspentOutput,
+  MwebUnspentOutput,
+} from './utxo.js';
 
 export type {
   FeeRate,

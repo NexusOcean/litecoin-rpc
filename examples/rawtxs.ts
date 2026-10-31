@@ -12,6 +12,7 @@
  */
 import dotenv from 'dotenv';
 import { createLitecoinRpcClient } from '../src/index.js';
+import type { CanonicalUnspentOutput } from '../src/index.js';
 
 const { parsed } = dotenv.config({ path: '.env.test' });
 const { LTC_HOST, LTC_USER, LTC_PASS, LTC_PORT, LTC_PROTOCOL } =
@@ -29,7 +30,11 @@ async function main() {
   const shouldSend = process.argv.includes('--send');
 
   const unspent = await client.listUnspent(1);
-  const utxo = unspent.find((u) => u.spendable && u.address);
+  // MWEB outputs have no vout and can't be spent by txid:vout.
+  const utxo = unspent.find(
+    (u): u is CanonicalUnspentOutput =>
+      u.spendable && !!u.address && typeof u.vout === 'number',
+  );
   if (!utxo) {
     console.error('No spendable outputs available');
     process.exit(1);

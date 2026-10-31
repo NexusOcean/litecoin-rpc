@@ -224,7 +224,8 @@ maybeDescribeUnlocked('signMessage', () => {
 describe('lockUnspent', () => {
   it('locks and unlocks a real unspent output', async () => {
     const unspent = await client.listUnspent();
-    const [utxo] = unspent;
+    // MWEB outputs have no vout and can't be locked by txid:vout.
+    const utxo = unspent.find((u) => typeof u.vout === 'number');
     if (!utxo) return;
 
     const locked = await client.lockUnspent(false, [

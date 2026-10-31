@@ -24,8 +24,14 @@
 
 - `ImportMultiRequest.scriptPubKey` is now optional, since a request may use
   `desc` instead.
+- `UnspentOutput` is now a union of `CanonicalUnspentOutput` and
+  `MwebUnspentOutput`. MWEB entries from `listunspent` have no `vout`,
+  `scriptPubKey`, `solvable` or `safe`; narrow with
+  `typeof utxo.vout === 'number'`.
+- `CanonicalUnspentOutput` includes `label`, `desc` and `witnessScript`.
 
 ### Removed
 
 - `signRawTransaction`. The `signrawtransaction` RPC was removed in Litecoin
   Core 0.18. Use `signRawTransactionWithWallet` or `signRawTransactionWithKey`.
+- `UnspentOutput.account`. Litecoin Core no longer returns it; use `label`.

@@ -60,6 +60,8 @@ export type {
   WalletTransactionListEntry,
   ListSinceBlockResult,
   UnspentOutput,
+  CanonicalUnspentOutput,
+  MwebUnspentOutput,
   AddressGroupingEntry,
   AddressGrouping,
   AddressBalances,

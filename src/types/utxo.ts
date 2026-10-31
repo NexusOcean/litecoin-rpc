@@ -12,16 +12,31 @@ export interface TxOut {
   coinbase: boolean;
 }
 
-export interface UnspentOutput {
+export interface CanonicalUnspentOutput {
   txid: string;
   vout: number;
   address?: string;
-  account?: string;
+  label?: string;
   scriptPubKey: string;
   amount: number;
   confirmations: number;
   redeemScript?: string;
+  witnessScript?: string;
   spendable: boolean;
   solvable: boolean;
+  desc?: string;
   safe: boolean;
 }
+
+/** An MWEB output. `txid` holds the MWEB output ID; there is no `vout`. */
+export interface MwebUnspentOutput {
+  txid: string;
+  vout?: never;
+  address: string;
+  amount: number;
+  confirmations: number;
+  spendable: boolean;
+}
+
+/** Narrow with `typeof utxo.vout === 'number'`. */
+export type UnspentOutput = CanonicalUnspentOutput | MwebUnspentOutput;
